@@ -51,21 +51,18 @@ class OrderService {
     }
 
     /*Get All Orders*/
-
     @Transactional
-    List<OrderModel> getAllOrders() {
-        List<OrderDomain> orderDomain = OrderDomain.list()  // Use plural for the list variable
+    List<OrderModel> getAllOrders(){
+        List<OrderDomain> orderDomains=OrderDomain.list()
         List<OrderModel> orderModels=[]
-        orderDomain.each { orderDomains ->  // Use singular for the loop variable
-            OrderModel orderModel = new OrderModel()
-            orderModel.orderDate = orderDomains.orderDate  // Now this references the correct instance
-            orderModel.userId = orderDomains.users.id
-            orderModel.bookId = orderDomains.lineitems.collect { it.books.id }
+         orderDomains.each{orderDomain->
+            OrderModel orderModel=new OrderModel()
+            orderModel.orderDate=orderDomain.orderDate
+            orderModel.bookId=orderDomain.lineitems.collect{it.books.id}
              orderModels << orderModel
         }
         return orderModels
     }
-
 
     /*Get order by userId*/
     @Transactional
@@ -91,6 +88,28 @@ class OrderService {
         if(orderDomain){
             orderDomain.delete()
             return "deleted successfully"
+        }
+    }
+
+    /*Update By Id*/
+    @Transactional
+    def updateById(Long id, OrderModel updateOrderModel) {
+        OrderDomain orderDomain = OrderDomain.findById(id)
+        if (orderDomain) {
+            orderDomain.lineitems.each{lineitem->lineitem.delete()}
+            orderDomain.lineitems.clear()
+            orderDomain.orderDate = updateOrderModel.orderDate
+            updateOrderModel.bookId.each {
+                BooksDomain booksDomain = BooksDomain.findById(it)
+                if (booksDomain) {
+                    LineItemsDomain lineItemsDomain = new LineItemsDomain()
+                    lineItemsDomain.books = booksDomain
+                    lineItemsDomain.orders = orderDomain
+                    orderDomain.addToLineitems(lineItemsDomain)
+                }
+            }
+            orderDomain.save(flush: true)
+            return "updated successfully"
         }
     }
 

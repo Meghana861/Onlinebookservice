@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.Put
 
 import javax.inject.Inject
 
@@ -34,5 +35,9 @@ class OrderController {
     @Delete("/{id}")
     def deleteOrder(@PathVariable Long id){
         return orderService.deleteById(id)
+    }
+    @Put("/{id}")
+    def updateOrder(@PathVariable Long id,@Body OrderModel updateOrderModel){
+        return orderService.updateById(id,updateOrderModel)
     }
 }
