@@ -11,30 +11,30 @@ import javax.inject.Singleton
 
 @Singleton
 class OrderService {
+    /*Save Orders*/
     @Transactional
-    def saveOrders(OrderModel orderModel) {
-        OrderDomain orderDomain = new OrderDomain()
-        orderDomain.orderDate = orderModel.orderDate
-        UserDomain user = UserDomain.findById(orderModel.userId)
-        if (user) {
-            orderDomain.users = user
+    def saveOrders(OrderModel orderModel){
+        OrderDomain orderDomain=new OrderDomain()
+        orderDomain.orderDate=orderModel.orderDate
+        UserDomain userDomain=UserDomain.findById(orderModel.userId)
+        if(userDomain) {
+            orderDomain.users =userDomain
             orderDomain.save()
         }
-        orderModel.bookId.each {
-            BooksDomain book = BooksDomain.findById(it)
-            if (book) {
-                LineItemsDomain lineItems = new LineItemsDomain()
-                lineItems.orders = orderDomain
-                lineItems.books = book
-                lineItems.save()
+
+        orderModel.bookId.each{
+            BooksDomain booksDomain=BooksDomain.findById(it)
+            if(booksDomain){
+                LineItemsDomain lineItemsDomain=new LineItemsDomain()
+                lineItemsDomain.orders=orderDomain
+                lineItemsDomain.books=booksDomain
+                lineItemsDomain.save()
             }
         }
-        return "your order id is:${orderDomain.id}"
+        return "you order id is${orderDomain.id}"
     }
-
     /*Get Order By orderId*/
-
-    @Transactional
+   @Transactional
     def getOrderById(Long id) {
         OrderModel orderModel = new OrderModel()
         OrderDomain orderDomain = OrderDomain.findById(id)

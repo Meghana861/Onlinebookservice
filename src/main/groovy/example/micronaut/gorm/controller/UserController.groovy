@@ -3,6 +3,8 @@ package example.micronaut.gorm.controller
 import example.micronaut.gorm.domain.UserDomain
 import example.micronaut.gorm.model.UserModel
 import example.micronaut.gorm.service.UserService
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
@@ -11,18 +13,32 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.annotation.Status
 
 import javax.inject.Inject
 import java.nio.file.Path
 
-@Controller("/users")
+@Controller("/users-process")
 class UserController {
     @Inject
     UserService userService
 
-    @Post("/save")
+    @Post
+    @Status(HttpStatus.CREATED)
     def saveUsers(@Body UserModel userModel){
-        userService.saveUser(userModel)
+        try {
+           def user= userService.saveUser(userModel)
+            print user
+            if(user){
+                return HttpResponse.created(user)
+            }
+            else{
+                return HttpResponse.badRequest("Failed to add user")
+            }
+        }
+        catch (Exception e) {
+            return HttpResponse.serverError("An error occurred: ${e.message}")
+        }
     }
 
     @Get

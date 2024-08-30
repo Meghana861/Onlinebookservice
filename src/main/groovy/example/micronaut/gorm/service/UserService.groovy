@@ -23,7 +23,7 @@ class UserService {
         userDomain.phoneNumber = userModel.phoneNumber
         userDomain.address = userModel.address
         userDomain.save()
-        return "User Saved Successfully"
+        return userDomain
     }
 
     /*Get All Users*/
