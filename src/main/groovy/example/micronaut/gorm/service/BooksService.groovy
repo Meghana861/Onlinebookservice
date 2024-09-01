@@ -17,29 +17,21 @@ class BooksService {
                 price: booksModel.price,
                 pubDate: booksModel.pubDate
         )
-
-        // Save the domain entity
-        BooksDomain savedBook = booksDomain.save(flush: true, failOnError: true)
-
-        // Convert back to BooksModel
-        return new BooksModel(
-                title: savedBook.title,
-                author: savedBook.author,
-                price: savedBook.price,
-                pubDate: savedBook.pubDate
-        )
+        BooksDomain savedBook=booksDomain.save(flush: true, failOnError: true)
+        return convertModelEntity(savedBook)
     }
 
     @Transactional
     def getAllBooks() {
         List<BooksDomain> booksDomain = BooksDomain.findAll()
-        return booksDomain
+        return booksDomain.collect{it->convertModelEntity(it)}
     }
 
     @Transactional
     def getBookById(Long id) {
         BooksDomain booksDomain = BooksDomain.findById(id)
-        return booksDomain
+        return convertModelEntity(booksDomain)
+
     }
 
     @Transactional
@@ -50,9 +42,10 @@ class BooksService {
             booksDomain.author = updateBookModel.author
             booksDomain.price = updateBookModel.price
             booksDomain.pubDate = updateBookModel.pubDate
-            booksDomain.save()
+            BooksDomain updatedBook=booksDomain.save()
+            return convertModelEntity(updateBook)
         }
-        return updateBookModel
+
 
     }
 
@@ -64,6 +57,14 @@ class BooksService {
             return "deleted successfully"
         }
     }
+
+    static BooksModel convertModelEntity(BooksDomain booksDomain) {
+        return new BooksModel(
+                title: booksDomain.title,
+                author: booksDomain.author,
+                price: booksDomain.price,
+                pubDate: booksDomain.pubDate
+        )
+    }
+
 }
-
-
