@@ -42,8 +42,15 @@ class UserController {
     }
 
     @Get
+    @Status(HttpStatus.CREATED)
     def getUsers(){
-      userService.getAllUsers()
+      def userModelList= userService.getAllUsers()
+        if(userModelList){
+            return HttpResponse.ok(userModelList)
+        }
+        else{
+            return HttpResponse.notFound("Users Not Found")
+        }
     }
 
     @Post("/login")
@@ -51,9 +58,16 @@ class UserController {
         return userService.getUserByEmailAndPassword(userModel.email,userModel.password)
     }
 
-    @Put("/update/{id}")
+    @Put("/{id}")
+    @Status(HttpStatus.CREATED)
     def updateUser(@PathVariable Long id,@Body UserModel userModel){
-        return userService.updateUser(id,userModel)
+        def updatedUser=userService.updateUser(id,userModel)
+        if(updatedUser){
+            return HttpResponse.ok(updatedUser)
+        }
+        else{
+            return HttpResponse.notFound("User with ${id} Not Found to Update ")
+        }
     }
 
     @Get("/{id}")
@@ -62,8 +76,15 @@ class UserController {
     }
 
     @Delete("/{id}")
+    @Status(HttpStatus.CREATED)
     def deleteById(@PathVariable Long id){
-        return userService.deleteById(id)
+        String deleteUser= userService.deleteById(id)
+        if(deleteUser){
+            return HttpResponse.noContent()
+        }
+        else{
+            return HttpResponse.notFound("User Not Found with id ${id}")
+        }
     }
 
     @Get("/getnames")

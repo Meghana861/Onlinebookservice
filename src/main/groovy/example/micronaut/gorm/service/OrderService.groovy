@@ -35,20 +35,16 @@ class OrderService {
     }
     /*Get Order By orderId*/
    @Transactional
-    def getOrderById(Long id) {
-        OrderModel orderModel = new OrderModel()
-        OrderDomain orderDomain = OrderDomain.findById(id)
-        if (orderDomain) {
-            orderModel.orderDate = orderDomain.orderDate
-            orderModel.userId = orderDomain.users.id
-            orderModel.bookId = orderDomain.lineitems.collect { it.books.id }
-            /* 1. here we have to use orderDomain.lineitems instead of lineItemsDomain because lineItemsDomain represents a single instance but the
-              orderDomain.lineitems represents the collection because lineitems as a whole collection saved as a property in the class orderDomain
-               2. orderDomain.lineitems is a collection of LineItemsDomain
-               3. .collect { it.books.id } iterates over each LineItemsDomain object in the lineitems collection.*/
-            return orderModel
-        }
-    }
+   def getOrderById(Long id){
+       OrderDomain orderDomain=OrderDomain.findById(id)
+       if(orderDomain) {
+           OrderModel orderModel = new OrderModel()
+           orderModel.orderDate = orderDomain.orderDate
+           orderModel.userId =orderDomain.users.id
+           orderModel.bookId=orderDomain.lineitems.collect{it.books.id}
+           return orderModel
+       }
+   }
 
     /*Get All Orders*/
     @Transactional
