@@ -76,9 +76,9 @@ class UserController {
     }
 
     @Delete("/{id}")
-    @Status(HttpStatus.CREATED)
+    @Status(HttpStatus.NO_CONTENT)
     def deleteById(@PathVariable Long id){
-        String deleteUser= userService.deleteById(id)
+        def deleteUser= userService.deleteById(id)
         if(deleteUser){
             return HttpResponse.noContent()
         }

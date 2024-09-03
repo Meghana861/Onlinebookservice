@@ -21,7 +21,6 @@ class OrderService {
             orderDomain.users =userDomain
             orderDomain.save()
         }
-
         orderModel.bookId.each{
             BooksDomain booksDomain=BooksDomain.findById(it)
             if(booksDomain){
@@ -65,13 +64,15 @@ class OrderService {
     def getOrderByUserId(Long userId){
         def user=UserDomain.findById(userId)
         if(user){
-            OrderDomain orderDomain=OrderDomain.findByUsers(user)
-            if(orderDomain) {
-                OrderModel orderModel = new OrderModel()
-                id:orderModel.id
-                orderModel.orderDate = orderDomain.orderDate
-                orderModel.bookId = orderDomain.lineitems.collect{ it.books.id }
-                return orderModel
+            List<OrderDomain> orderDomains=OrderDomain.findAllByUsers(user)
+            if(orderDomains) {
+                def orderModels= orderDomains.collect {orderDomain->
+                    OrderModel orderModel = new OrderModel()
+                    orderModel.orderDate = orderDomain.orderDate
+                    orderModel.bookId = orderDomain.lineitems.collect { it.books.id }
+                    return orderModel
+                }
+                return orderModels
             }
         }
 

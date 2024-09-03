@@ -57,7 +57,7 @@ class UserService {
             userDomain.address = updatedUserModel.address
             userDomain.save()
         }
-        return updatedUserModel
+        return userDomain
     }
 
     /*Get By Id*/
@@ -73,7 +73,7 @@ class UserService {
         UserDomain userDomain=UserDomain.findById(id)
         if(userDomain){
             userDomain.delete()
-            return "Deleted Successfully"
+            return true
         }
         else{
             return false
